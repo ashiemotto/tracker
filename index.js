@@ -14,5 +14,12 @@ const connection = mysql.createConnection({
     database: process.env.DB_NAME,
 });
 
-
+inquirer.prompt([
+    {
+        type:'list',
+        name:'first_question',
+        message:'What would you like to do?',
+        choices:["View all Employees","View all Employees by Department","View all Employees by Manager", "Add Employee","Add Roles","Add Department","Update Roles"]
+    }
+])
 
