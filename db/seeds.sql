@@ -1,3 +1,5 @@
+USE TrackerDB;
+
 INSERT INTO department(name) VALUES
 ("Sales"),
 ("Service"),
