@@ -31,7 +31,7 @@ const startDoc =() =>{
         message:'What would you like to do?',
         choices:[
         "View all Employees",
-        "View all Employees by Department",
+        "View all Departments",
         "View all Employees by Manager", 
         "Add Employee",
         "Add Roles",
@@ -47,7 +47,7 @@ const startDoc =() =>{
            viewAll();
            break;
 
-        case 'View all Employees by Department':
+        case 'View all Departments':
             byDepartment();
             break;
 
@@ -95,15 +95,10 @@ console.table(res);
 startDoc()
 });
 };
-// search by department
-const byDepartment = ()=> {
-    connection.query(`SELECT employee.first_name AS firstname,
-    employee.last_name AS lastname,
-    department.name AS department,
-    CONCAT(e.first_name,',', e.last_name) 
-    AS manager FROM employee INNER JOIN role on role.id = employee.role_id 
-    INNER JOIN department on department.id = role.department_id 
-    LEFT JOIN employee e on employee.manager_id = e.id; `,(err,res)=>{
+
+// search all department
+const byDepartment = () => {
+    connection.query("SELECT * FROM department",(err,res)=>{
         if(err)throw err;
         console.table(res);
         startDoc();
@@ -193,4 +188,53 @@ const addRole = ()=>{
         });
     });
 };
+ // add department
+const addDepart = ()=>{
+    inquirer.prompt([
+        {
+            type:'input',
+            name:'depart',
+            message:'what department would you like to add',
+        },
+    ]).then(data =>{
+        connection.query(`INSERT INTO department SET ?`,
+        {
+           name:data.depart
+        },(err,res)=>{
+            if (err)throw err;
+    console.log("department added");
+    startDoc();
+        });
+    });
+};
+
+// update role
+const updateRole = () => {
+    inquirer.prompt([
+        {
+            type:'input',
+            name:'firstname',
+            message:'whos role do you need to update?',
+        },
+        {
+            type:'input',
+            name:'role',
+            message:'please input role number',
+        }
+    ]).then (data =>{
+        connection.query('UPDATE employee SET? WHERE ?',
+        [
+            {
+                role_id: data.role
+            },
+            {
+                first_name:data.firstname
+            }
+        ],(err,res)=>{
+            if (err)throw err;
+            console.log("role updated");
+            startDoc();
+        })
+    })
+}
  
