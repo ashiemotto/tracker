@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     // database username
     user: 'root',
     // database password
-    password: 'Stellan2018',
+    password: '',
     // database name
     database: 'TrackerDB',
 });
