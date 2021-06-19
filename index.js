@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     // database username
     user: 'root',
     // database password
-    password: '',
+    password: 'Stellan2018',
     // database name
     database: 'TrackerDB',
 });
@@ -78,7 +78,7 @@ const startDoc =() =>{
    }
 });
 };
-
+// view all
 const viewAll = () => {
 connection.query(`SELECT employee.first_name AS firstname,
  employee.last_name AS lastname,
@@ -95,7 +95,7 @@ console.table(res);
 startDoc()
 });
 };
-
+// search by department
 const byDepartment = ()=> {
     connection.query(`SELECT employee.first_name AS firstname,
     employee.last_name AS lastname,
@@ -109,7 +109,7 @@ const byDepartment = ()=> {
         startDoc();
     });
 };
-
+// find managers
 const byManager = ()=> {
     connection.query(`SELECT employee.first_name AS firstname,
     employee.last_name AS lastname,
@@ -134,73 +134,63 @@ const addEmployee = [
         type:'input',
         name:'lastName',
         message:'What is the last name ?',
-    }];
-
-    const roles = ()=>{
-        inquirer.prompt(modle)
-        
-
-        .then(data =>{
-            const roleID =modle.choices.indexOf(data.role)
-            connection.query(`INSERT INTO employee SET ?`,{
-                role_id:roleID
-            })
-            managers()
-        })
-    }
-    const modle=
+    
+    },
     {
-        type:'list',
+        type:'input',
         name:'role',
-        mwssage:"what is the employee'e role?",
-        choices:[
-            "master tech",
-            "sales assosiate",  
-            "wash kid",    
-            "service writter",
-            "tech",
-        ],   
-    }
-    const list =
+        message:"what is the employee'e role please enter a number between 1 and 5",
+    },
     {
-        type:'list',
+        type:'input',
         name:'manager',
-        message:'Who is the manager',
-        choices:[
-            'Ashton Headley',
-            'Cara Simms',
-            'Gordi Tam',
-        ],
-    }
+        message:'Who is the manager please enter a number between 1 and 3',
+}];
 
-    const managers = ()=>{
-        inquirer.prompt(list)
-        
-
-        .then(data =>{
-            const managerID =list.choices.indexOf(data.manager)
-            connection.query(`INSERT INTO employee SET ?`,{
-                // first_name:data.firstname,
-                // last_name:data.lastname,
-                // role_id:data.roleID,
-                manager_id:managerID
-            })
-            startDoc()
-        })
-    }
+    
     const add = ()=>{
     inquirer.prompt(addEmployee)
 
         .then(data =>{ 
-connection.query(`INSERT INTO employee SET ?`,
-{
-    first_name: data.firstname,
-    last_name: data.lastname
-},
-   roles()
+    
+connection.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id)VALUE("${data.firstName}", "${data.lastName}",${data.role},${data.manager})`,
+(err,res)=>{
+    if (err)throw err;
+    console.log("employee added");
+    // console.log (data.firstname);
+    startDoc();
+    });
 
-)
-})
+})};
 
-}
+const addRole = ()=>{
+    inquirer.prompt([
+        {
+            type:'input',
+            name:'role',
+            message:'what role would you like to add',
+        },
+        {
+            type:'input',
+            name:'salary',
+            message:'what does this position pay anually?',
+        },
+        {
+            type:'input',
+            name:'depid',
+            message:'please enter a department id'
+        }
+    ]).then(data =>{
+        connection.query(`INSERT INTO role SET ?`,
+        {
+            title:data.role,
+            salary:data.salary,
+            department_id:data.depid
+        },(err,res)=>{
+            if (err)throw err;
+    console.log("role added");
+    startDoc();
+        });
+    });
+};
  
